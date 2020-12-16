@@ -12,10 +12,6 @@ rm(list=ls())
 library(dplyr)
 library(here)
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=12000)
-
 #load synthetic population of crimes
 load(here("data", "synthetic_population_crimes_a.Rdata"))
 load(here("data", "synthetic_population_crimes_b.Rdata"))
