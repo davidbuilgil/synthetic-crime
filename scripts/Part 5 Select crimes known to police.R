@@ -16,10 +16,6 @@ library(dplyr)
 library(here)
 library(rsq)
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=12000)
-
 #load synthetic population
 load(here("data", "synthetic_population_crimes_a.Rdata"))
 load(here("data", "synthetic_population_crimes_b.Rdata"))
@@ -271,16 +267,16 @@ lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_
 
 #select variables of interest in lookup
 lookup <- lookup %>%
-  select(ï..OA11CD, LAD17CD) %>%
-  rename(OA11CD = ï..OA11CD)
+  select(?..OA11CD, LAD17CD) %>%
+  rename(OA11CD = ?..OA11CD)
 
 #load LAD to PFA lookup
 lookup2 <- read.csv(here("data", "Local_Authority_District_to_Community_Safety_Partnerships_to_Police_Force_Areas__January_2017__Lookup_in_England_and_Wales_Version_2.csv"))
 
 #select variables of interest in lookup
 lookup2 <- lookup2 %>%
-  select(ï..LAD17CD, PFA17CD, PFA17NM) %>%
-  rename(LAD17CD = ï..LAD17CD)
+  select(?..LAD17CD, PFA17CD, PFA17NM) %>%
+  rename(LAD17CD = ?..LAD17CD)
 
 #merge two lookups
 lookup <- left_join(lookup, lookup2, by = "LAD17CD")
