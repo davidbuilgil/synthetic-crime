@@ -46,16 +46,16 @@ lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_
 
 #select variables of interest in lookup
 lookup <- lookup %>%
-  select(ï..OA11CD, LSOA11CD, MSOA11CD, LAD17CD) %>%
-  rename(OA11CD = ï..OA11CD)
+  select(1, 4, 8, 10) %>%
+  rename(OA11CD = 1)
 
 #load LAD to PFA lookup
 lookup2 <- read.csv(here("data", "Local_Authority_District_to_Community_Safety_Partnerships_to_Police_Force_Areas__January_2017__Lookup_in_England_and_Wales_Version_2.csv"))
 
 #select variables of interest in lookup
 lookup2 <- lookup2 %>%
-  select(ï..LAD17CD, CSP17CD, PFA17CD) %>%
-  rename(LAD17CD = ï..LAD17CD)
+  select(1, 3, 5) %>%
+  rename(LAD17CD = 1)
 
 #merge two lookups
 lookup <- left_join(lookup, lookup2, by = "LAD17CD")

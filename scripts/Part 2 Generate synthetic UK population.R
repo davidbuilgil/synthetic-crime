@@ -66,7 +66,7 @@ Census <- Age_by_OA %>%
   dplyr::select(OA11CD, Pop, mean_age, sd_age, mean_bornuk, Mean_level4_edu,
                 Mean_white, mean_no_income, mean_married, Mean_male)
 
-#remove files to save memory
+#remove objects
 rm(list=c("Age_by_OA", "BornUK_by_OA", "Edu_by_OA", "Ethnic_by_OA", "Income_by_OA",
           "Married_by_OA", "Sex_by_OA"))
 
@@ -119,13 +119,13 @@ csew <- csew %>%
 cor <- cor(csew, use = "pairwise.complete.obs")
 cor
 
-#remove files to save memory
+#remove objects
 rm(list=c("csew"))
 
 #join the OA-level data with the synthetic individual-level data
 syn_res_OA <- left_join(syn_res, Census, by = "OA11CD")
 
-#remove files to save memory
+#remove objects
 rm(list=c("syn_res", "Census"))
 
 #generate empty dataframe to save results
@@ -205,7 +205,7 @@ for(d in 1:D) {
   
 }
 
-#remove files to save memory
+#remove objects
 rm(list=c("syn_res_OA", "cor", "cor_d", "cor_d2", "sigma", "syn_res_OA_d", "syn_res_OA_v",
           "d", "D", "N"))
 

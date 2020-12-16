@@ -31,7 +31,7 @@ syn_res_OA <- rbind(syn_res_OA.a, syn_res_OA.b, syn_res_OA.c,
                     syn_res_OA.d, syn_res_OA.e, syn_res_OA.f,
                     syn_res_OA.g)
 
-#remove files to save memory
+#remove objects
 rm(list=c("syn_res_OA.a", "syn_res_OA.b", "syn_res_OA.c",
           "syn_res_OA.d", "syn_res_OA.e", "syn_res_OA.f",
           "syn_res_OA.g"))
@@ -98,7 +98,7 @@ summary(model_damage)
 rsq.n(model_damage)
 RMSE(model_damage)/(max(csew$damage2)-min(csew$damage2))
 
-#remove files to save memory
+#remove objects
 rm(list=c("csew", "syn_res"))
 
 #combine estimates for each crime type, assigning to a vector
@@ -137,28 +137,28 @@ theta_violence <- model_violence$theta
 theta_theft <- model_theft$theta
 theta_damage <- model_damage$theta
 
-#remove files to save memory
+#remove objects
 rm(list=c("model_violence", "model_damage", "model_theft"))
 
 #generate violent crimes based on these estimates for the synthetic individual data
 syn_res_OA <-  syn_res_OA %>% 
   mutate(violence = rnbinom(length(eta_violence), mu = exp(eta_violence), size = theta_violence))
 
-#remove files to save memory
+#remove objects
 rm(list=c("eta_violence", "theta_violence"))
 
 #generate property crimes based on these estimates for the synthetic individual data
 syn_res_OA <-  syn_res_OA %>% 
   mutate(theft = rnbinom(length(eta_theft), mu = exp(eta_theft), size = theta_theft))
 
-#remove files to save memory
+#remove objects
 rm(list=c("eta_theft", "theta_theft"))
 
 #generate damage crimes based on these estimates for the synthetic individual data
 syn_res_OA <-  syn_res_OA %>% 
   mutate(damage = rnbinom(length(eta_damage), mu = exp(eta_damage), size = theta_damage))
 
-#remove files to save memory
+#remove objects
 rm(list=c("eta_damage", "theta_damage"))
 
 #check first rows
