@@ -38,7 +38,7 @@ g) *KS204EW	- Country of Birth*
 3.  Lookup tables from the Output Area level to Local Authority District and from Local Authority District to Police Force Area are downloaded from the [Open Geography portal from the Office for National Statistics](https://geoportal.statistics.gov.uk/).
 4.  Police recorded data at the Community Safety Partnership level are downloaded from the ['Police recorded crime and outcomes open data tables' page](https://www.gov.uk/government/statistics/police-recorded-crime-open-data-tables) of GOV.UK.
 
-_Script run guide_.
+_Script run guide_
 
 All scripts should be ran from within the 'synthetic-crime.Rproj' R project file.
 
