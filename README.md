@@ -23,7 +23,7 @@ _Data download guide_
 
 All data used in this project is either available under a [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) or simulated within the R environment:
 
-1.  Census data aggregates at the Output Area level are downloaded from the [2011 Census Bulk Data Download](https://www.nomisweb.co.uk/census/2011/bulk/r2_2) of NOMIS. WE download the files for Output Areas:
+1.  Census data aggregates at the Output Area level are downloaded from the [2011 Census Bulk Data Download](https://www.nomisweb.co.uk/census/2011/bulk/r2_2) of NOMIS. We download the following files for Output Areas:
 a) *KS601EW - Economic Activity*
 b) *KS501EW - Qualifications and Students*
 c) *KS201EW - Ethnic Group*
