@@ -222,7 +222,7 @@ corrplot(cor_csew, method="circle")
 mtext("Correlation matrix in CSEW", at=3.8, line=-0.2, cex=1.2)
 
 #load synthetic survey data
-load(here("synthetic_survey_crimes.RData"))
+load(here("data", "synthetic_survey_crimes.RData"))
 
 # set plotting parameters
 par(mfrow=c(3,2), mai = c(0.6, 0.5, 0.5, 0.5))
@@ -343,33 +343,32 @@ csew %>%
             damage   = mean(damage2))
 
 #load OA to LAD lookup
-lookup <- read.csv("Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv")
+lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv"))
 
 #select variables of interest in lookup
 lookup <- lookup %>%
-  select(?..OA11CD, LSOA11CD, MSOA11CD, LAD17CD) %>%
-  rename(OA11CD = ?..OA11CD)
+  select(ï..OA11CD, LSOA11CD, MSOA11CD, LAD17CD) %>%
+  rename(OA11CD = ï..OA11CD)
 
 #load LAD to PFA lookup
-lookup2 <- read.csv("https://opendata.arcgis.com/datasets/31dec1a0f04a435dadd43de6292ea260_0.csv")
+lookup2 <- read.csv(here("data", "Local_Authority_District_to_Community_Safety_Partnerships_to_Police_Force_Areas__January_2017__Lookup_in_England_and_Wales_Version_2.csv"))
 
 #select variables of interest in lookup
 lookup2 <- lookup2 %>%
-  select(?..LAD17CD, CSP17CD, CSP17NM, PFA17CD) %>%
-  rename(LAD17CD = ?..LAD17CD)
+  select(ï..LAD17CD, CSP17CD, CSP17NM, PFA17CD) %>%
+  rename(LAD17CD = ï..LAD17CD)
 
 #merge two lookups
 lookup <- left_join(lookup, lookup2, by = "LAD17CD")
 
-#remove files and garbage collection to save memory 
+#remove objects
 rm(list=c("lookup2"))
-gc()
 
 #add PFA information to synthetic data
 syn_sample_OA <- left_join(syn_sample_OA, lookup, by = "OA11CD")
 
 #open geographies of CSEW
-csew_geos <- read.csv("csew_11_geos.csv")
+csew_geos <- read.csv(here("data", "csew_11_geos.csv"))
 
 #add PFA information to CSEW
 csew <- left_join(csew, csew_geos, by = "rowlabel")
@@ -409,7 +408,7 @@ plot(PFAs$property_csew, PFAs$property_syn, pch = 20,
      ylab = "Synthetic survey data")
 abline(lm(PFAs$property_syn ~ PFAs$property_csew))
 round(cor(PFAs$property_csew, PFAs$property_syn), 3)
-text(520, 95, "cor = 0.88", cex = 0.9)
+text(520, 95, "cor = 0.87", cex = 0.9)
 plot(PFAs$damage_csew, PFAs$damage_syn, pch = 20,
      ylim = c(0,305), xlim = c(0,305),
      main = "Damage crime in PFAs",
@@ -463,15 +462,15 @@ abline(lm(CSPs$damage_syn ~ CSPs$damage_csew))
 round(cor(CSPs$damage_csew, CSPs$damage_syn, use = "complete.obs"), 3)
 text(75, 14, "cor = 0.59", cex = 0.9)
 
-#remove files to save memory
+#remove objects
 rm(list=c("CSPs", "PFAs", "csew_matrix", "cor_csew", "cor_syn", "census_by_OA", "csew_CSPs",
           "csew_geos", "csew_PFAs", "syn_PFAs", "syn_CSPs", "n_syn", "syn_sample_OA"))
 
 #load synthetic police data
-load(here("synthetic_police_crimes.Rdata"))
+load(here("data", "synthetic_police_crimes.Rdata"))
 
 #load police data
-police_data <- read.csv("Crime_by_lsoa_2013.csv")
+police_data <- read.csv(here("data", "Crime_by_lsoa_2013.csv"))
 police_data <- police_data %>%
   dplyr::select(LSOA.code, msoa, CSP17CD, violence.combined, property.combined, damage.combined) %>%
   rename(LSOA11CD = LSOA.code,
@@ -527,24 +526,25 @@ round(cor(data_MSOA$damage_poli, data_MSOA$damage_syn, use = "complete.obs"), 3)
 text(480, 500, "cor = 0.23", cex = 0.9)
 
 #load police data
-police_data <- read.csv("prc-csp-1112-1415-tables.csv")
+police_data <- read.csv(here("data", "prc-csp-1112-1415-tables.csv"))
 
 #recode some PFA to CSP17NM
-#Adjustments to match CSP labels from 2017/18
-police_data$CSP.Name[police_data$CSP.Name=="Northern Devon" ] <- "North Devon"
-police_data$CSP.Name[police_data$CSP.Name=="Somerset East_Mendip" ] <- "Somerset"
-police_data$CSP.Name[police_data$CSP.Name=="Somerset East_South Somerset" ] <- "Somerset"
-police_data$CSP.Name[police_data$CSP.Name=="Sedgemoor" ] <- "Somerset"
-police_data$CSP.Name[police_data$CSP.Name=="Taunton Deane" ] <- "Somerset"
-police_data$CSP.Name[police_data$CSP.Name=="West Somerset" ] <- "Somerset"
-police_data$CSP.Name[police_data$CSP.Name=="Rhondda Cynon Taf" ] <- "Cwm Taf"
-police_data$CSP.Name[police_data$CSP.Name=="Merthyr Tydfil" ] <- "Cwm Taf"
-police_data$CSP.Name[police_data$CSP.Name=="Basingstoke and Deane" ] <- "North Hampshire"
-police_data$CSP.Name[police_data$CSP.Name=="Hart" ] <- "North Hampshire"
-police_data$CSP.Name[police_data$CSP.Name=="Rushmoor" ] <- "North Hampshire"
-police_data$CSP.Name[police_data$CSP.Name=="Bromsgrove" ] <- "North Worcestershire"
-police_data$CSP.Name[police_data$CSP.Name=="Redditch" ] <- "North Worcestershire"
-police_data$CSP.Name[police_data$CSP.Name=="Wyre Forest" ] <- "North Worcestershire"
+#Adjustments to match CSP labels from 2017
+police_data <- police_data %>%
+  mutate(CSP.Name = ifelse(CSP.Name == "Northern Devon", "North Devon", CSP.Name),
+         CSP.Name = ifelse(CSP.Name == "Somerset East_Mendip" |
+                           CSP.Name == "Somerset East_South Somerset" |
+                           CSP.Name == "Sedgemoor" |
+                           CSP.Name == "Taunton Deane" |
+                           CSP.Name == "West Somerset", "Somerset", CSP.Name),
+         CSP.Name = ifelse(CSP.Name == "Rhondda Cynon Taf" |
+                           CSP.Name == "Merthyr Tydfil", "Cwm Taf", CSP.Name),
+         CSP.Name = ifelse(CSP.Name == "Basingstoke and Deane" |
+                           CSP.Name == "Hart" |
+                           CSP.Name == "Rushmoor", "North Hampshire", CSP.Name),
+         CSP.Name = ifelse(CSP.Name == "Bromsgrove" |
+                           CSP.Name == "Redditch" |
+                           CSP.Name == "Wyre Forest", "North Worcestershire", CSP.Name))
 
 #count crimes in CSP
 police_data <- police_data %>%
