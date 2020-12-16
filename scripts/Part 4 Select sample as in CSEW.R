@@ -16,10 +16,6 @@ library(dplyr)
 library(here)
 library(sampling)
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=10000)
-
 #load synthetic population
 load(here("data", "synthetic_population_crimes_a.Rdata"))
 load(here("data", "synthetic_population_crimes_b.Rdata"))
@@ -32,12 +28,12 @@ syn_res_OA <- rbind(syn_res_OA.a, syn_res_OA.b, syn_res_OA.c,
                     syn_res_OA.d, syn_res_OA.e, syn_res_OA.f,
                     syn_res_OA.g)
 
-#remove files to save memory
+#remove objects
 rm(list=c("syn_res_OA.a", "syn_res_OA.b", "syn_res_OA.c",
           "syn_res_OA.d", "syn_res_OA.e", "syn_res_OA.f",
           "syn_res_OA.g"))
 
-#as in the CSEW, remove all individuals aged less than 16 from sampling
+#as in the CSEW, remove all individuals aged less than 16
 syn_res_OA <- syn_res_OA %>%
   filter(Age >= 16)
 
@@ -50,16 +46,16 @@ lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_
 
 #select variables of interest in lookup
 lookup <- lookup %>%
-  select(?..OA11CD, LSOA11CD, MSOA11CD, LAD17CD) %>%
-  rename(OA11CD = ?..OA11CD)
+  select(ï..OA11CD, LSOA11CD, MSOA11CD, LAD17CD) %>%
+  rename(OA11CD = ï..OA11CD)
 
 #load LAD to PFA lookup
 lookup2 <- read.csv(here("data", "Local_Authority_District_to_Community_Safety_Partnerships_to_Police_Force_Areas__January_2017__Lookup_in_England_and_Wales_Version_2.csv"))
 
 #select variables of interest in lookup
 lookup2 <- lookup2 %>%
-  select(?..LAD17CD, CSP17CD, PFA17CD) %>%
-  rename(LAD17CD = ?..LAD17CD)
+  select(ï..LAD17CD, CSP17CD, PFA17CD) %>%
+  rename(LAD17CD = ï..LAD17CD)
 
 #merge two lookups
 lookup <- left_join(lookup, lookup2, by = "LAD17CD")
@@ -67,7 +63,7 @@ lookup <- left_join(lookup, lookup2, by = "LAD17CD")
 #add LAD information to synthetic data
 syn_res_OA <- left_join(syn_res_OA, lookup, by = "OA11CD")
 
-#remove files to save memory
+#remove objects
 rm(list=c("lookup"))
 
 #count population in each MSOA
@@ -192,7 +188,7 @@ sample.C <- strata(LSOAs.C, "MSOA11CD", size = rep(2, nrow(sample.C)),
 #get random sample of LSOAs for stratum C
 sample_LSOA.C <- getdata(LSOAs.C, sample.C)
 
-#remove files to save memory
+#remove objects
 rm(list=c("pop_MSOA", "pop_MSOA_d", "pop_MSOA_D", "pop_MSOA.B", "pop_MSOA.C", "pop_PFA",
           "sample_MSOA.C", "sample.B", "sample.C", "LSOAs.C", "csew_11_sample",
           "lookup", "lookup2", "MSOA_PFA", "d", "D"))
@@ -229,12 +225,26 @@ sample_units.C <- getdata(syn_res_OA[syn_res_OA$LSOA11CD %in% sample_LSOA.C$LSOA
 #merge three random samples
 sample <- rbind(sample_units.A, sample_units.B, sample_units.C)
 
-#remove files to save memory
+#remove objects
 rm(list=c("csew_PFA", "sample_LSOA.C", "sample_MSOA.B", "sample_units.A", "sample.B",
           "sample.C", "sample_units.B", "sample_units.C", "sample.A", "syn_res_OA"))
 
 #load synthetic population
-load(here("synthetic_population_crimes.Rdata"))
+load(here("data", "synthetic_population_crimes_a.Rdata"))
+load(here("data", "synthetic_population_crimes_b.Rdata"))
+load(here("data", "synthetic_population_crimes_c.Rdata"))
+load(here("data", "synthetic_population_crimes_d.Rdata"))
+load(here("data", "synthetic_population_crimes_e.Rdata"))
+load(here("data", "synthetic_population_crimes_f.Rdata"))
+load(here("data", "synthetic_population_crimes_g.Rdata"))
+syn_res_OA <- rbind(syn_res_OA.a, syn_res_OA.b, syn_res_OA.c,
+                    syn_res_OA.d, syn_res_OA.e, syn_res_OA.f,
+                    syn_res_OA.g)
+
+#remove objects
+rm(list=c("syn_res_OA.a", "syn_res_OA.b", "syn_res_OA.c",
+          "syn_res_OA.d", "syn_res_OA.e", "syn_res_OA.f",
+          "syn_res_OA.g"))
 
 #select synthetic population sample as in the CSEW
 syn_sample_OA <- syn_res_OA %>%
