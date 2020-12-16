@@ -19,8 +19,6 @@ This generates three sets of synthetic crime data, which can be then compared at
 2.	*'synthetic_police_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 5)
 3.	*'synthetic_survey_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 6)
 
-With these data, we can:
-
 _Data download guide_
 
 All data used in this project is either available under a [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) or simulated within the R environment:
