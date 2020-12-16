@@ -45,3 +45,5 @@ All scripts should be ran from within the 'synthetic-crime.Rproj' R project file
 4.  The R script file named *'Part 4 Select sample as in CSEW'* is used to select a random sample of units from the synthetic population following sampling design of the CSEW.
 5.  The R script file named *'Part 5 Select crimes known to police'* is used to generate whether each crime is known to the police or not, and select the subset of synthetic police-recorded crimes.
 6.  The R script file named *'Part 6 Empirical evaluation'* is used to evaluate the results of the simulation study.
+
+Moreover the R script file named *'ZZ Exemplar application LISA'* presents an exemplar application of synthetic crime data generated in this simulation.
