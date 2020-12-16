@@ -43,7 +43,7 @@ _Script run guide_
 All scripts should be ran from within the 'synthetic-crime.Rproj' R project file.
 
 1.  The R script file named *'Part 1 Prepare Census data'* is used to wrangle census data into the appropriate format that will be used in the main scripts.
-2.  The R script file named *'Part 2 a Generate synthetic UK population'* is used to generate a synthetic population of residents in England and Wales based on empirical parameters observed in Census data and covariance matrix observed in CSEW
+2.  The R script file named *'Part 2 Generate synthetic UK population'* is used to generate a synthetic population of residents in England and Wales based on empirical parameters observed in Census data and covariance matrix observed in CSEW
 3.  The R script file named *'Part 3 Generate crimes in units'* is used to generate crime victimisation in units based on parameters obtained from the CSEW.  
 4.  The R script file named *'Part 4 Select sample as in CSEW'* is used to select a random sample of units from the synthetic population following sampling design of the CSEW.
 5.  The R script file named *'Part 5 Select crimes known to police'* is used to generate whether each crime is known to the police or not, and select the subset of synthetic police-recorded crimes.
