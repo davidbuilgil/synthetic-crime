@@ -8,11 +8,6 @@
 
 rm(list=ls())
 
-#for David
-setwd("C:/Users/david/Dropbox (The University of Manchester)/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-#for Ian
-setwd("~/Dropbox/Academic Articles/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-
 #load dplyr package
 library(dplyr)
 library(here)
