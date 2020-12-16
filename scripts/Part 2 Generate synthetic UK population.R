@@ -8,10 +8,6 @@
 
 rm(list=ls())
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=9000)
-
 #seed is set for replication
 set.seed(999)
 
