@@ -15,7 +15,7 @@ The following steps are followed to generate a synthetic dataset of crimes in En
 
 This generates three sets of synthetic crime data, which can be then compared at the different spatial scales:
 
-1.	*'synthetic_population_crimes.RData'*: synthetic data of all crime (Generated in Step 4)
+1.	*'synthetic_population_crimes.RData'*: synthetic data of all crime - split in 7 files (Generated in Step 4)
 2.	*'synthetic_police_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 5)
 3.	*'synthetic_survey_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 6)
 With these data, we can:
