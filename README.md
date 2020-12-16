@@ -6,7 +6,7 @@ Authors: David Buil-Gil, Ian Brunton-Smith, Jose Pina-Sánchez, Alexandru Cernat
 
 The following steps are followed to generate a synthetic dataset of crimes in England and Wales:
 
-1.	Download Census data aggregates at the Output Area level under the [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)
+1.	Download Census data aggregates at the Output Area level under a [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)
 2.  Download microdata of the Crime Survey for England and Wales (CSEW) 2011/12
 3.	Generate a synthetic population of residents in Output Areas based on empirical parameters observed in Census data and covariance matrix observed in CSEW
 4.	Based on parameters from the CSEW 2011/12, generate crimes (violence, property crime and damage) suffered by each unit in the synthetic population
@@ -18,9 +18,8 @@ This generates three sets of synthetic crime data, which can be then compared at
 1.	*'synthetic_population_crimes.RData'*: synthetic data of all crime - split in 7 files (Generated in Step 4)
 2.	*'synthetic_police_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 5)
 3.	*'synthetic_survey_crimes.RData'*: synthetic data of police-recorded crime (Generated in Step 6)
+
 With these data, we can:
-1.	Try the MTMM at the level of crimes, individuals, and as many levels of geography as we wish (output areas, LSOAs, MSOAs, wards, local authorities, CSP, PFA, regions)
-2.	Using the synthetic CSEW data, try different SAE approaches and see which one gets estimates closer to the empirical values
 
 _Data download guide_
 
