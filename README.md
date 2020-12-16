@@ -24,12 +24,12 @@ _Data download guide_
 All data used in this project is either available under a [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) or simulated within the R environment:
 
 1.  Census data aggregates at the Output Area level are downloaded from the [2011 Census Bulk Data Download](https://www.nomisweb.co.uk/census/2011/bulk/r2_2) of NOMIS. We download the following files for Output Areas:
-a) *KS601EW - Economic Activity*
-b) *KS501EW - Qualifications and Students*
-c) *KS201EW - Ethnic Group*
-d) *KS101EW - Usual Resident Population*
-e) *QS103EW	- Age by Single Year*
-f) *KS103EW	- Marital and Civil Partnership Status*
+a) *KS601EW - Economic Activity*;
+b) *KS501EW - Qualifications and Students*;
+c) *KS201EW - Ethnic Group*;
+d) *KS101EW - Usual Resident Population*;
+e) *QS103EW	- Age by Single Year*;
+f) *KS103EW	- Marital and Civil Partnership Status*; and
 g) *KS204EW	- Country of Birth*
 2.  CSEW 2011/12 data are downloaded from the [UK Data Service](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=7252).
 3.  Lookup tables from the Output Area level to Local Authority District and from Local Authority District to Police Force Area are downloaded from the [Open Geography portal from the Office for National Statistics](https://geoportal.statistics.gov.uk/).
