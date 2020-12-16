@@ -22,7 +22,7 @@ library(tmap)
 
 #increase memory limit a bit
 memory.limit()
-memory.limit(size=10000)
+memory.limit(size=12000)
 
 #load synthetic population of crimes
 load(here("data", "synthetic_population_crimes_a.Rdata"))
@@ -132,7 +132,7 @@ LAD_info <- LADs %>%
   left_join(LAD_info, by = c("lad17cd" = "LAD17CD")) %>%
   filter(!is.na(theft.t))
 
-#remove files to save memory
+#remove objects
 rm(list=c("LADs", "syn_pol_by_LAD", "syn_res_by_LAD", "syn_sample_by_LAD"))
 
 #map distributions
@@ -169,7 +169,7 @@ xy <- coordinates(LAD_info)
 plot(w, xy, col = 'red', lwd = 1, add = TRUE)
 
 #create spatial weights matrix
-ww <-  nb2listw(w, style='W', zero.policy = TRUE)
+ww <-  nb2listw(w, style = 'W', zero.policy = TRUE)
 
 #calculate Moran's I
 moran(LAD_info$violence.t, ww, n = length(ww$neighbours), S0 = Szero(ww), 
@@ -278,24 +278,24 @@ table(LAD_info.s$quad_sig)
 
 #map results
 t <- tm_shape(LAD_info.t) +
-  tm_borders("grey", lwd = 0.1) +
-  tm_polygons("quad_sig", title = "LISA; All crime",
-              palette = c('high-high' = 'indianred1', 'non-significant' = 'lemonchiffon1', 
-                          'low-low' = 'palegreen1', 'Missing' = 'grey')) +
+  tm_borders("grey51", alpha = 0) +
+  tm_polygons("quad_sig", title = "LISA All crime",
+              palette = c('high-high' = '#CC6677', 'non-significant' = '#6699CC', 
+                          'low-low' = '#999933', 'Missing' = '#888888')) +
   tm_layout(frame = FALSE)
 
 p <- tm_shape(LAD_info.p) +
-  tm_borders("grey51", alpha = 0.2) +
-  tm_polygons("quad_sig", title = "LISA; Police data",
-              palette = c('high-high' = 'indianred1', 'non-significant' = 'lemonchiffon1', 
-                          'low-low' = 'palegreen1', 'Missing' = 'grey')) +
+  tm_borders("grey51", alpha = 0) +
+  tm_polygons("quad_sig", title = "LISA Police data",
+              palette = c('high-high' = '#CC6677', 'non-significant' = '#6699CC', 
+                          'low-low' = '#999933', 'Missing' = '#888888')) +
   tm_layout(frame = FALSE)
 
 s <- tm_shape(LAD_info.s) +
-  tm_borders("grey51", alpha = 0.2) +
-  tm_polygons("quad_sig", title = "LISA; Survey data",
-              palette = c('high-high' = 'indianred1', 'non-significant' = 'lemonchiffon1', 
-                          'low-low' = 'palegreen1', 'Missing' = 'grey')) +
+  tm_borders("grey51", alpha = 0) +
+  tm_polygons("quad_sig", title = "LISA Survey data",
+              palette = c('high-high' = '#CC6677', 'non-significant' = '#6699CC', 
+                          'low-low' = '#999933', 'Missing' = '#888888')) +
   tm_layout(frame = FALSE)
 
 # plot three maps
