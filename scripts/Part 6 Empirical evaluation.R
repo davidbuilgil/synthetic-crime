@@ -49,9 +49,6 @@ syn_res_by_OA <- syn_res_OA %>%
             theft     = sum(theft),
             damage    = sum(damage))
 
-#remove objects
-#rm(list=c("syn_res_OA"))
-
 #load age data from Census
 Age_by_OA <- read.csv(here("data", "Age_by_OA_replicate.csv"))
 
@@ -363,104 +360,8 @@ rm(list=c("lookup2"))
 #add PFA information to synthetic data
 syn_sample_OA <- left_join(syn_sample_OA, lookup, by = "OA11CD")
 
-#open geographies of CSEW
-csew_geos <- read.csv(here("data", "csew_11_geos.csv"))
-
-#add PFA information to CSEW
-csew <- left_join(csew, csew_geos, by = "rowlabel")
-
-#count crime victimisation by PFAs
-syn_PFAs <- syn_sample_OA %>%
-  group_by(PFA17CD) %>%
-  summarise(violence_syn = sum(violence),
-            property_syn = sum(theft),
-            damage_syn   = sum(damage))
-csew_PFAs <- csew %>%
-  mutate(PFA17CD = ifelse(PFA17CD == "E23000034", "E23000001", PFA17CD)) %>% #merge city of London and Met
-  group_by(PFA17CD) %>%
-  summarise(violence_csew = sum(violence2),
-            property_csew = sum(theft2),
-            damage_csew   = sum(damage2))
-
-#merge both files at the PFA level
-PFAs <- left_join(csew_PFAs, syn_PFAs, by = "PFA17CD")
-
-# set plotting parameters
-par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-
-#correlation between count of crimes in CSEW and synthetic survey data at PFA level
-plot(PFAs$violence_csew, PFAs$violence_syn, pch = 20,
-     ylim = c(0,153), xlim = c(0,153),
-     main = "Violent crime in PFAs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(PFAs$violence_syn ~ PFAs$violence_csew))
-round(cor(PFAs$violence_csew, PFAs$violence_syn), 3)
-text(120, 25, "cor = 0.52", cex = 0.9)
-plot(PFAs$property_csew, PFAs$property_syn, pch = 20,
-     ylim = c(0,650), xlim = c(0,650),
-     main = "Property crime in PFAs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(PFAs$property_syn ~ PFAs$property_csew))
-round(cor(PFAs$property_csew, PFAs$property_syn), 3)
-text(520, 95, "cor = 0.87", cex = 0.9)
-plot(PFAs$damage_csew, PFAs$damage_syn, pch = 20,
-     ylim = c(0,305), xlim = c(0,305),
-     main = "Damage crime in PFAs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(PFAs$damage_syn ~ PFAs$damage_csew))
-round(cor(PFAs$damage_csew, PFAs$damage_syn), 3)
-text(250, 40, "cor = 0.75", cex = 0.9)
-
-#count crime victimisation by CSPs
-syn_CSPs <- syn_sample_OA %>%
-  group_by(CSP17CD) %>%
-  summarise(violence_syn = sum(violence),
-            property_syn = sum(theft),
-            damage_syn   = sum(damage))
-csew_CSPs <- csew %>%
-  group_by(CSP17CD) %>%
-  summarise(violence_csew = sum(violence2),
-            property_csew = sum(theft2),
-            damage_csew   = sum(damage2))
-
-#merge both files at the PFA level
-CSPs <- left_join(csew_CSPs, syn_CSPs, by = "CSP17CD")
-
-# set plotting parameters
-par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-
-#correlation between count of crimes in CSEW and synthetic survey data at CSP level
-plot(CSPs$violence_csew, CSPs$violence_syn, pch = 20,
-     ylim = c(0,48), xlim = c(0,48),
-     main = "Violent crime in CSPs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(CSPs$violence_syn ~ CSPs$violence_csew))
-round(cor(CSPs$violence_csew, CSPs$violence_syn, use = "complete.obs"), 3)
-text(40, 8, "cor = 0.43", cex = 0.9)
-plot(CSPs$property_csew, CSPs$property_syn, pch = 20,
-     ylim = c(0,84), xlim = c(0,84),
-     main = "Property crime in CSPs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(CSPs$property_syn ~ CSPs$property_csew))
-round(cor(CSPs$property_csew, CSPs$property_syn, use = "complete.obs"), 3)
-text(70, 13, "cor = 0.58", cex = 0.9)
-plot(CSPs$damage_csew, CSPs$damage_syn, pch = 20,
-     ylim = c(0,95), xlim = c(0,95),
-     main = "Damage crime in CSPs",
-     xlab = "CSEW",
-     ylab = "Synthetic survey data")
-abline(lm(CSPs$damage_syn ~ CSPs$damage_csew))
-round(cor(CSPs$damage_csew, CSPs$damage_syn, use = "complete.obs"), 3)
-text(75, 14, "cor = 0.59", cex = 0.9)
-
 #remove objects
-rm(list=c("CSPs", "PFAs", "csew_matrix", "cor_csew", "cor_syn", "census_by_OA", "csew_CSPs",
-          "csew_geos", "csew_PFAs", "syn_PFAs", "syn_CSPs", "n_syn", "syn_sample_OA"))
+rm(list=c("csew_matrix", "cor_csew", "cor_syn", "census_by_OA", "n_syn", "syn_sample_OA"))
 
 #load synthetic police data
 load(here("data", "synthetic_police_crimes.Rdata"))
