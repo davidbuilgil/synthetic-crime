@@ -263,3 +263,15 @@ bornuk_mean <-  Country_by_OA %>%
 
 # save
 write.csv(bornuk_mean, here("data", "BornUK_by_OA_replicate.csv"))
+
+# Load in SPSS CSEW data (needs to be downloaded from UK Data Service).
+csew    <- read_spss(file = here("data","csew_apr11mar12_nvf.sav"))
+csew_vf <- read_spss(file = here("data","csew_apr11mar12_vf.sav"))
+
+# Remove haven labels from CSEW data.
+csew    <- zap_labels(csew)
+csew_vf <- zap_labels(csew_vf)
+
+# Save CSEW as .Rdata for later use.
+save(csew   , file = here("data","csew_apr11mar12_nvf.Rdata"))
+save(csew_vf, file = here("data","csew_apr11mar12_vf.Rdata"))
