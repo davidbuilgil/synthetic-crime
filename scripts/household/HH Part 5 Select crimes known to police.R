@@ -115,6 +115,7 @@ glm_copsknow <- copsknow ~ age_more65 + terraced + hrp_white + one_person + no_i
 model_repo_theft <- glm(formula = glm_copsknow, family = binomial(link = "logit"), data = csew_vf_theft)
 summary(model_repo_theft)
 rsq.n(model_repo_theft)
+DescTools::PseudoR2(model_repo_theft, which = "Nagelkerke")
 
 #extract estimates for property crime
 Data_theft <- Data_theft %>% 
@@ -243,6 +244,7 @@ csew_vf_dam <-  csew_vf %>%
 model_repo_dam <- glm(formula = glm_copsknow, family = binomial(link = "logit"), data = csew_vf_dam)
 summary(model_repo_dam)
 rsq.n(model_repo_dam)
+DescTools::PseudoR2(model_repo_dam, which = "Nagelkerke")
 
 #extract estimates for damage crime
 Data_dam <- Data_dam %>% 
@@ -284,7 +286,7 @@ load(here("data", "HHsynthetic_police_property.RData"))
 Data_crimes <- bind_rows(Data_theft, Data_dam)
 
 #load underrecording estimates in PFAs data
-csew_under <- read.csv("data", "csew_prc_pfa_11_v3.csv"))
+csew_under <- read.csv(here("data", "csew_prc_pfa_11_v3.csv"))
 
 #select variables of interest
 csew_under <- csew_under %>%

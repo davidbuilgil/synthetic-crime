@@ -15,6 +15,8 @@ library(ggplot2)
 library(ggpubr)
 
 #load synthetic population of crimes
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
+HHsyn_res_OA <- syn_res_OA
 load(here("data", "synthetic_population_crimes_a.Rdata"))
 load(here("data", "synthetic_population_crimes_b.Rdata"))
 load(here("data", "synthetic_population_crimes_c.Rdata"))
@@ -56,44 +58,16 @@ rm(list=c("lookup2"))
 
 #add spatial information to synthetic data
 syn_res_OA <- left_join(syn_res_OA, lookup, by = "OA11CD")
+HHsyn_res_OA <- left_join(HHsyn_res_OA, lookup, by = "OA11CD")
 
 #load synthetic police data
+load(here("data", "HHsynthetic_police_crimes.Rdata"))
+HHData_crimes <- Data_crimes
 load(here("data", "synthetic_police_crimes.Rdata"))
 
 #add spatial information to synthetic data
 Data_crimes <- left_join(Data_crimes, lookup, by = "OA11CD")
-
-#count synthetic crime data in LSOAs
-syn_data_LSOA <- syn_res_OA %>%
-  group_by(LSOA11CD) %>%
-  summarise(violence_syn = sum(violence),
-            property_syn = sum(theft),
-            damage_syn   = sum(damage),
-            pop = n()) 
-syn_police_LSOA <- Data_crimes %>%
-  group_by(LSOA11CD) %>%
-  summarise(violence_syn_pol = sum(violence),
-            property_syn_pol = sum(theft),
-            damage_syn_pol   = sum(damage)) 
-
-#merge both files
-data_LSOA <- left_join(syn_data_LSOA, syn_police_LSOA, by = "LSOA11CD")
-
-#count synthetic crime data in MSOAs
-syn_data_MSOA <- syn_res_OA %>%
-  group_by(MSOA11CD) %>%
-  summarise(violence_syn = sum(violence),
-            property_syn = sum(theft),
-            damage_syn   = sum(damage),
-            pop = n()) 
-syn_police_MSOA <- Data_crimes %>%
-  group_by(MSOA11CD) %>%
-  summarise(violence_syn_pol = sum(violence),
-            property_syn_pol = sum(theft),
-            damage_syn_pol   = sum(damage)) 
-
-#merge both files
-data_MSOA <- left_join(syn_data_MSOA, syn_police_MSOA, by = "MSOA11CD")
+HHData_crimes <- left_join(HHData_crimes, lookup, by = "OA11CD")
 
 #count synthetic crime data in CSPs
 syn_data_CSP <- syn_res_OA %>%
@@ -102,14 +76,26 @@ syn_data_CSP <- syn_res_OA %>%
             property_syn = sum(theft),
             damage_syn   = sum(damage),
             pop = n()) 
+HHsyn_data_CSP <- HHsyn_res_OA %>%
+  group_by(CSP17NM) %>%
+  summarise(HHproperty_syn = sum(theft),
+            HHdamage_syn   = sum(damage),
+            HHpop = n()) 
 syn_police_CSP <- Data_crimes %>%
   group_by(CSP17NM) %>%
   summarise(violence_syn_pol = sum(violence),
             property_syn_pol = sum(theft),
             damage_syn_pol   = sum(damage)) 
+HHsyn_police_CSP <- HHData_crimes %>%
+  group_by(CSP17NM) %>%
+  summarise(HHproperty_syn_pol = sum(theft),
+            HHdamage_syn_pol   = sum(damage))
 
 #merge both files
-data_CSP <- left_join(syn_data_CSP, syn_police_CSP, by = "CSP17NM")
+data_CSP <- syn_data_CSP %>% 
+  left_join(syn_police_CSP, by = "CSP17NM") %>%
+  left_join(HHsyn_data_CSP, by = "CSP17NM") %>%
+  left_join(HHsyn_police_CSP, by = "CSP17NM")
 
 #count synthetic crime data in PFAs
 syn_data_PFA <- syn_res_OA %>%
@@ -118,85 +104,56 @@ syn_data_PFA <- syn_res_OA %>%
             property_syn = sum(theft),
             damage_syn   = sum(damage),
             pop = n()) 
+HHsyn_data_PFA <- HHsyn_res_OA %>%
+  group_by(PFA17CD) %>%
+  summarise(HHproperty_syn = sum(theft),
+            HHdamage_syn   = sum(damage),
+            HHpop = n()) 
 syn_police_PFA <- Data_crimes %>%
   group_by(PFA17CD) %>%
   summarise(violence_syn_pol = sum(violence),
             property_syn_pol = sum(theft),
             damage_syn_pol   = sum(damage)) 
+HHsyn_police_PFA <- HHData_crimes %>%
+  group_by(PFA17CD) %>%
+  summarise(HHproperty_syn_pol = sum(theft),
+            HHdamage_syn_pol   = sum(damage)) 
 
 #merge both files
-data_PFA <- left_join(syn_data_PFA, syn_police_PFA, by = "PFA17CD")
+data_PFA <- syn_data_PFA %>%
+  left_join(syn_police_PFA, by = "PFA17CD") %>%
+  left_join(HHsyn_data_PFA, by = "PFA17CD") %>%
+  left_join(HHsyn_police_PFA, by = "PFA17CD")
 
 #calculate measurement error (assuming multiplicative error)
-data_LSOA <- data_LSOA %>%
-  mutate(all_syn_pol = (violence_syn_pol + property_syn_pol + damage_syn_pol) / pop,
-         all_syn = (violence_syn + property_syn + damage_syn) / pop,
-         violence_syn_pol = violence_syn_pol / pop,
-         violence_syn = violence_syn / pop ,
-         property_syn_pol = property_syn_pol / pop ,
-         property_syn = property_syn / pop ,
-         damage_syn_pol = damage_syn_pol / pop ,
-         damage_syn = damage_syn / pop ,
-         all_ME = all_syn_pol / all_syn,
-         violence_ME = violence_syn_pol / violence_syn,
-         property_ME = property_syn_pol / property_syn,
-         damage_ME = damage_syn_pol / damage_syn)
-data_MSOA <- data_MSOA %>%
-  mutate(all_syn_pol = (violence_syn_pol + property_syn_pol + damage_syn_pol) / pop,
-         all_syn = (violence_syn + property_syn + damage_syn) / pop,
-         violence_syn_pol = violence_syn_pol / pop,
-         violence_syn = violence_syn / pop ,
-         property_syn_pol = property_syn_pol / pop ,
-         property_syn = property_syn / pop ,
-         damage_syn_pol = damage_syn_pol / pop ,
-         damage_syn = damage_syn / pop ,
-         all_ME = all_syn_pol / all_syn,
-         violence_ME = violence_syn_pol / violence_syn,
-         property_ME = property_syn_pol / property_syn,
-         damage_ME = damage_syn_pol / damage_syn)
 data_CSP <- data_CSP %>%
-  mutate(all_syn_pol = (violence_syn_pol + property_syn_pol + damage_syn_pol) / pop,
-         all_syn = (violence_syn + property_syn + damage_syn) / pop,
+  mutate(all_syn_pol = (violence_syn_pol + HHproperty_syn_pol + HHdamage_syn_pol) / pop,
+         all_syn = (violence_syn + HHproperty_syn + HHdamage_syn) / pop,
          violence_syn_pol = violence_syn_pol / pop,
          violence_syn = violence_syn / pop ,
-         property_syn_pol = property_syn_pol / pop ,
-         property_syn = property_syn / pop ,
-         damage_syn_pol = damage_syn_pol / pop ,
-         damage_syn = damage_syn / pop ,
+         property_syn_pol = HHproperty_syn_pol / HHpop ,
+         property_syn = HHproperty_syn / HHpop ,
+         damage_syn_pol = HHdamage_syn_pol / HHpop ,
+         damage_syn = HHdamage_syn / HHpop ,
          all_ME = all_syn_pol / all_syn,
          violence_ME = violence_syn_pol / violence_syn,
          property_ME = property_syn_pol / property_syn,
          damage_ME = damage_syn_pol / damage_syn)
 data_PFA <- data_PFA %>%
-  mutate(all_syn_pol = (violence_syn_pol + property_syn_pol + damage_syn_pol) / pop,
-         all_syn = (violence_syn + property_syn + damage_syn) / pop,
+  mutate(all_syn_pol = (violence_syn_pol + HHproperty_syn_pol + HHdamage_syn_pol) / pop,
+         all_syn = (violence_syn + HHproperty_syn + HHdamage_syn) / pop,
          violence_syn_pol = violence_syn_pol / pop,
          violence_syn = violence_syn / pop ,
-         property_syn_pol = property_syn_pol / pop ,
-         property_syn = property_syn / pop ,
-         damage_syn_pol = damage_syn_pol / pop ,
-         damage_syn = damage_syn / pop ,
+         property_syn_pol = HHproperty_syn_pol / HHpop ,
+         property_syn = HHproperty_syn / HHpop ,
+         damage_syn_pol = HHdamage_syn_pol / HHpop ,
+         damage_syn = HHdamage_syn / HHpop ,
          all_ME = all_syn_pol / all_syn,
          violence_ME = violence_syn_pol / violence_syn,
          property_ME = property_syn_pol / property_syn,
          damage_ME = damage_syn_pol / damage_syn)
 
 #select only variables of interest
-data_for_boxplot.1 <- data_MSOA %>%
-  mutate('Crime type' = "Violence",
-         'Geography' = "MSOA",
-         'ME' = violence_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.2 <- data_MSOA %>%
-  mutate('Crime type' = "Property crime",
-         'Geography' = "MSOA",
-         'ME' = property_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.3 <- data_MSOA %>%
-  mutate('Crime type' = "Damage",
-         'Geography' = "MSOA",
-         'ME' = damage_ME) %>%
-  select('Crime type', Geography, ME)
 data_for_boxplot.4 <- data_CSP %>%
   mutate('Crime type' = "Violence",
          'Geography' = "CSP",
@@ -227,31 +184,7 @@ data_for_boxplot.9 <- data_PFA %>%
          'Geography' = "PFA",
          'ME' = damage_ME) %>%
   select('Crime type', Geography, ME)
-data_for_boxplot.10 <- data_LSOA %>%
-  mutate('Crime type' = "Violence",
-         'Geography' = "LSOA",
-         'ME' = violence_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.11 <- data_LSOA %>%
-  mutate('Crime type' = "Property crime",
-         'Geography' = "LSOA",
-         'ME' = property_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.12 <- data_LSOA %>%
-  mutate('Crime type' = "Damage",
-         'Geography' = "LSOA",
-         'ME' = damage_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.13 <- data_LSOA %>%
-  mutate('Crime type' = "All",
-         'Geography' = "LSOA",
-         'ME' = all_ME) %>%
-  select('Crime type', Geography, ME)
-data_for_boxplot.14 <- data_MSOA %>%
-  mutate('Crime type' = "All",
-         'Geography' = "MSOA",
-         'ME' = all_ME) %>%
-  select('Crime type', Geography, ME)
+
 data_for_boxplot.15 <- data_CSP %>%
   mutate('Crime type' = "All",
          'Geography' = "CSP",
@@ -264,17 +197,13 @@ data_for_boxplot.16 <- data_PFA %>%
   select('Crime type', Geography, ME)
 
 #create dataset for visualisation
-data_for_boxplot <- rbind(data_for_boxplot.1, data_for_boxplot.2,
-                          data_for_boxplot.3, data_for_boxplot.4,
+data_for_boxplot <- rbind(data_for_boxplot.4,
                           data_for_boxplot.5, data_for_boxplot.6,
                           data_for_boxplot.7, data_for_boxplot.8,
-                          data_for_boxplot.9, data_for_boxplot.10,
-                          data_for_boxplot.11, data_for_boxplot.12,
-                          data_for_boxplot.13, data_for_boxplot.14,
+                          data_for_boxplot.9, 
                           data_for_boxplot.15, data_for_boxplot.16)
 data_for_boxplot <- data_for_boxplot %>%
-  mutate(Geography = factor(Geography, levels = c("LSOA", "MSOA", "CSP", "PFA"))) %>%
-  filter(Geography != "LSOA" & Geography != "MSOA")
+  mutate(Geography = factor(Geography, levels = c("CSP", "PFA")))
 
 #grouped boxplot
 ggplot(data_for_boxplot, aes(x = `Crime type`, y = ME, fill = Geography)) + 

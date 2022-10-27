@@ -88,11 +88,13 @@ csew <- csew %>%
 model_theft <- glm.nb(theft2 ~ age_more65 + terraced + hrp_white + one_person + no_income + no_car + social_rent + hrp_no_religion, data = csew)
 summary(model_theft)
 rsq.n(model_theft)
+DescTools::PseudoR2(model_theft, which = "Nagelkerke")
 RMSE(model_theft)/(max(csew$theft2)-min(csew$theft2))
 
 model_damage <- glm.nb(damage2 ~ age_more65 + terraced + hrp_white + one_person + no_income + no_car + social_rent + hrp_no_religion, data = csew)
 summary(model_damage)
 rsq.n(model_damage)
+DescTools::PseudoR2(model_damage, which = "Nagelkerke")
 RMSE(model_damage)/(max(csew$damage2)-min(csew$damage2))
 
 #remove files to save memory
