@@ -92,8 +92,58 @@ rm(list=c("Age_by_OA", "Ethnic_by_OA", "Income_by_OA", "Edu_by_OA", "Married_by_
 census_by_OA <- census_by_OA %>%
   left_join(syn_res_by_OA, by = "OA11CD")
 
+#load synthetic household population of crimes
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
+
+#aggregate synthetic household population in OAs
+HHsyn_res_by_OA <- syn_res_OA %>%
+  group_by(OA11CD) %>%
+  summarize(AgeHH       = mean(age_more65),
+            Terraced    = mean(terraced),
+            WhiteHH     = mean(hrp_white),
+            Oneperson   = mean(one_person),
+            No_incomeHH = mean(no_income),
+            No_car      = mean(no_car),
+            Social_rent = mean(social_rent),
+            No_religion = mean(hrp_no_religion),
+            theftHH     = sum(theft),
+            damageHH    = sum(damage))
+
+#load household variables from Census
+AgeHH_by_OA <- read.csv(here("data", "Agehh_by_OA_replicate.csv"))
+Accommodation_by_OA <- read.csv(here("data", "Accommodation_by_OA_replicate.csv"))
+EthnicHH_by_OA <- read.csv(here("data", "Ethnichh_by_OA_replicate.csv"))
+HHsize_by_OA <- read.csv(here("data", "HHsize_by_OA_replicate.csv"))
+Economic_by_OA <- read.csv(here("data", "Economic_by_OA_replicate.csv"))
+Car_by_OA <- read.csv(here("data", "Car_by_OA_replicate.csv"))
+Tenure_by_OA <- read.csv(here("data", "Tenure_by_OA_replicate.csv"))
+Religion_by_OA <- read.csv(here("data", "Religion_by_OA_replicate.csv"))
+
+#merge all census household data
+censusHH_by_OA <- AgeHH_by_OA %>%
+  dplyr::select(OA11CD, mean_hrp_over65) %>%
+  left_join(Accommodation_by_OA, by = "OA11CD") %>%
+  left_join(EthnicHH_by_OA, by = "OA11CD") %>%
+  left_join(HHsize_by_OA, by = "OA11CD") %>%
+  left_join(Economic_by_OA, by = "OA11CD") %>%
+  left_join(Car_by_OA, by = "OA11CD") %>%
+  left_join(Tenure_by_OA, by = "OA11CD") %>%
+  left_join(Religion_by_OA, by = "OA11CD") %>%
+  dplyr::select(OA11CD, mean_hrp_over65, mean_terraced, mean_white,
+                mean_one_person, mean_no_income, mean_no_car, mean_social_rent,
+                mean_no_religion)
 #remove objects
-rm(list=c("syn_res_by_OA"))
+rm(list=c("AgeHH_by_OA", "Accommodation_by_OA", "EthnicHH_by_OA",
+          "HHsize_by_OA", "Economic_by_OA", "Car_by_OA", "Tenure_by_OA",
+          "Religion_by_OA"))
+
+#merge aggregates of synthetic population and census aggregates
+census_by_OA <- census_by_OA %>%
+  left_join(censusHH_by_OA, by = "OA11CD") %>%
+  left_join(HHsyn_res_by_OA, by = "OA11CD")
+
+#remove objects
+rm(list=c("syn_res_by_OA", "HHsyn_res_by_OA", "censusHH_by_OA"))
 
 #correlation between aggregates of synthetic population and census aggregates
 age_plot <- ggplot(census_by_OA, aes(x = mean_age, y = Age)) +
@@ -101,7 +151,7 @@ age_plot <- ggplot(census_by_OA, aes(x = mean_age, y = Age)) +
   xlim(0, 100) + ylim(0, 100) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Mean age") +
+  ggtitle("Mean age (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 80, y = 20, label = "cor = 0.96")
 males_plot <- ggplot(census_by_OA, aes(x = Mean_male, y = Male)) +
@@ -109,7 +159,7 @@ males_plot <- ggplot(census_by_OA, aes(x = Mean_male, y = Male)) +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion males") +
+  ggtitle("Proportion males (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.78")
 whites_plot <- ggplot(census_by_OA, aes(x = Mean_white, y = White)) +
@@ -117,15 +167,15 @@ whites_plot <- ggplot(census_by_OA, aes(x = Mean_white, y = White)) +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion whites") +
+  ggtitle("Proportion whites (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
-income_plot <- ggplot(census_by_OA, aes(x = mean_no_income, y = No_income)) +
+income_plot <- ggplot(census_by_OA, aes(x = mean_no_income.x, y = No_income)) +
   geom_point() +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion no income") +
+  ggtitle("Proportion no income (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.97")
 education_plot <- ggplot(census_by_OA, aes(x = Mean_level4_edu, y = High_edu)) +
@@ -133,7 +183,7 @@ education_plot <- ggplot(census_by_OA, aes(x = Mean_level4_edu, y = High_edu)) +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion high education") +
+  ggtitle("Proportion high edu. (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
 married_plot <- ggplot(census_by_OA, aes(x = mean_married, y = Married)) +
@@ -141,7 +191,7 @@ married_plot <- ggplot(census_by_OA, aes(x = mean_married, y = Married)) +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion married") +
+  ggtitle("Proportion married (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.98")
 bornUK_plot <- ggplot(census_by_OA, aes(x = mean_bornuk, y = BornUK)) +
@@ -149,75 +199,90 @@ bornUK_plot <- ggplot(census_by_OA, aes(x = mean_bornuk, y = BornUK)) +
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   geom_smooth(method = "lm", color = "blue", fullrange = "T") +
-  ggtitle("Proportion born UK") +
+  ggtitle("Proportion born UK (Ind.)") +
   labs(x = "Census", y = "Synthetic") + 
   annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
 
+ageHH_plot <- ggplot(census_by_OA, aes(x = mean_hrp_over65, y = AgeHH)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion over 65s (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.96")
+terraced_plot <- ggplot(census_by_OA, aes(x = mean_terraced, y = Terraced)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion terraced (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
+whiteHH_plot <- ggplot(census_by_OA, aes(x = mean_white, y = WhiteHH)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion white HRP (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
+oneperson_plot <- ggplot(census_by_OA, aes(x = mean_one_person, y = Oneperson)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion one person (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.95")
+noincomeHH_plot <- ggplot(census_by_OA, aes(x = mean_no_income.y, y = No_incomeHH)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion no income (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.95")
+nocar_plot <- ggplot(census_by_OA, aes(x = mean_no_car, y = No_car)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion no car (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.98")
+socialrent_plot <- ggplot(census_by_OA, aes(x = mean_social_rent, y = Social_rent)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion social renter (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.99")
+noreligion_plot <- ggplot(census_by_OA, aes(x = mean_no_religion, y = No_religion)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  theme_bw() +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
+  ggtitle("Proportion no religion (HH)") +
+  labs(x = "Census", y = "Synthetic") + 
+  annotate(geom = "text", x = 0.8, y = 0.2, label = "cor = 0.92")
+
 #print scatter plots
 ggarrange(age_plot, males_plot, whites_plot, income_plot, education_plot,
-          married_plot, bornUK_plot, nrow = 3, ncol = 3)
+          married_plot, bornUK_plot, 
+          ageHH_plot, terraced_plot, whiteHH_plot, oneperson_plot, 
+          noincomeHH_plot, nocar_plot, socialrent_plot, noreligion_plot,
+          nrow = 5, ncol = 3)
 
 ggsave(here("plots/census_synth_plot.png"),
-       width = 20, height = 15, units = "cm")
+       width = 22, height = 35, units = "cm")
 
 #remove objects
 rm(list=c("age_plot", "males_plot", "whites_plot", "income_plot", "education_plot",
-          "married_plot", "bornUK_plot"))
-
-# set plotting parameters
-#par(mfrow=c(3,3), mai = c(0.5, 0.5, 0.5, 0.5))
-
-#correlation between aggregates of synthetic population and census aggregates
-#plot(census_by_OA$mean_age, census_by_OA$Age, pch = 20,
-#     ylim = c(0,100), xlim = c(0,100),
-#     main = "Mean age in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$mean_age, census_by_OA$Age), 3)
-#text(80, 20, "cor = 0.98", cex = 0.9)
-#plot(census_by_OA$Mean_male, census_by_OA$Male, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion males in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$Mean_male, census_by_OA$Male), 3)
-#text(0.8, 0.2, "cor = 0.78", cex = 0.9)
-#plot(census_by_OA$Mean_white, census_by_OA$White, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion whites in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$Mean_white, census_by_OA$White), 3)
-#text(0.8, 0.2, "cor = 0.99", cex = 0.9)
-#plot(census_by_OA$mean_no_income, census_by_OA$No_income, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion without income in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$mean_no_income, census_by_OA$No_income), 3)
-#text(0.8, 0.2, "cor = 0.97", cex = 0.9)
-#plot(census_by_OA$Mean_level4_edu, census_by_OA$High_edu, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion high education in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$Mean_level4_edu, census_by_OA$High_edu), 3)
-#text(0.8, 0.2, "cor = 0.99", cex = 0.9)
-#plot(census_by_OA$mean_married, census_by_OA$Married, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion married in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$mean_married, census_by_OA$Married), 3)
-#text(0.8, 0.2, "cor = 0.98", cex = 0.9)
-#plot(0, type = 'n', axes = FALSE, ann = FALSE)
-#plot(census_by_OA$mean_bornuk, census_by_OA$BornUK, pch = 20,
-#     ylim = c(0,1), xlim = c(0,1),
-#     main = "Proportion born in UK in OAs",
-#     xlab = "Census data",
-#     ylab = "Synthetic data")
-#round(cor(census_by_OA$mean_bornuk, census_by_OA$BornUK), 3)
-#text(0.8, 0.2, "cor = 0.99", cex = 0.9)
+          "married_plot", "bornUK_plot", "ageHH_plot", "terraced_plot", 
+          "whiteHH_plot", "oneperson_plot", 
+          "noincomeHH_plot", "nocar_plot", "socialrent_plot", "noreligion_plot"))
 
 #load in CSEW non-victim form data
 load(here("data", "csew_apr11mar12_nvf.Rdata"))
@@ -259,7 +324,7 @@ csew <- csew %>%
 #recode crime types
 csew <- csew %>%
   mutate(violence2 = (common_i + wound_i + robber_i) /10000,
-         theft2    = (theftp_i + theftf_i + thefto_i + biketh_i + burgla_i) /10000,
+         theft2    = (theftf_i + thefto_i + biketh_i + burgla_i) /10000,
          damage2   = (homeva_i + mv.van_i)/10000)
 
 #obtain correlation matrix
@@ -268,7 +333,7 @@ csew_matrix <- csew %>%
 cor_csew <- cor(csew_matrix, use = "pairwise.complete.obs")
 
 # set plotting parameters
-par(mfrow=c(1,2), mai = c(1, 1, 1, 1))
+#par(mfrow=c(1,2), mai = c(1, 1, 1, 1))
 
 #plot correlation matrices
 library(corrplot)
@@ -286,10 +351,12 @@ corrplot(cor_csew, method="circle")
 mtext("Correlation matrix in CSEW", at=3.8, line=-0.2, cex=1.2)
 
 #load synthetic survey data
+load(here("data", "HHsynthetic_survey_crimes.RData"))
+HHsyn_sample_OA <- syn_sample_OA
 load(here("data", "synthetic_survey_crimes.RData"))
 
 # set plotting parameters
-par(mfrow=c(3,2), mai = c(0.6, 0.5, 0.5, 0.5))
+#par(mfrow=c(3,2), mai = c(0.6, 0.5, 0.5, 0.5))
 
 #plot crime distributions in synthetic survey data and CSEW
 plot(table(csew$violence2), main = "Violence crime in CSEW", 
@@ -428,22 +495,26 @@ rm(list=c("lookup2"))
 
 #add PFA information to synthetic data
 syn_sample_OA <- left_join(syn_sample_OA, lookup, by = "OA11CD")
+HHsyn_sample_OA <- left_join(HHsyn_sample_OA, lookup, by = "OA11CD")
 
 #remove objects
-rm(list=c("csew_matrix", "cor_csew", "cor_syn", "census_by_OA", "n_syn", "syn_sample_OA"))
+rm(list=c("csew_matrix", "cor_csew", "cor_syn", "census_by_OA", "n_syn"))
 
 #load synthetic police data
+load(here("data", "HHsynthetic_police_crimes.Rdata"))
+HHData_crimes <- Data_crimes
 load(here("data", "synthetic_police_crimes.Rdata"))
 
 #load police data
 police_data <- read.csv(here("data", "Crime_by_lsoa_2013.csv"))
 police_data <- police_data %>%
-  dplyr::select(LSOA.code, msoa, CSP17CD, violence.combined, property.combined, damage.combined) %>%
+  dplyr::select(LSOA.code, msoa, CSP17CD, violence.combined, property.combined.nopertheft, damage.combined) %>%
   rename(LSOA11CD = LSOA.code,
          MSOA11CD = msoa)
 
 #add CSP information to synthetic data
 Data_crimes <- left_join(Data_crimes, lookup, by = "OA11CD")
+HHData_crimes <- left_join(HHData_crimes, lookup, by = "OA11CD")
 
 #count synthetic crime data in MSOAs
 syn_data_MSOA <- Data_crimes %>%
@@ -451,45 +522,22 @@ syn_data_MSOA <- Data_crimes %>%
   summarise(violence_syn = sum(violence),
             property_syn = sum(theft),
             damage_syn   = sum(damage)) 
+HHsyn_data_MSOA <- HHData_crimes %>%
+  group_by(MSOA11CD) %>%
+  summarise(HHproperty_syn = sum(theft),
+            HHdamage_syn   = sum(damage))
 
 #count police recorded crimes in MSOAs
 police_data_MSOA <- police_data %>%
   group_by(MSOA11CD) %>%
   summarise(violence_poli = sum(violence.combined),
-            property_poli = sum(property.combined),
+            property_poli = sum(property.combined.nopertheft),
             damage_poli   = sum(damage.combined)) 
 
 #merge both files
-data_MSOA <- left_join(police_data_MSOA, syn_data_MSOA, by = "MSOA11CD")
-
-# set plotting parameters
-#par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-
-#correlation between count of crimes in police data and synthetic police data at CSP level
-#plot(data_MSOA$violence_poli, data_MSOA$violence_syn, pch = 20,
-#     ylim = c(0,1500), xlim = c(0,1500),
-#     main = "Violent crime in MSOAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_MSOA$violence_syn ~ data_MSOA$violence_poli))
-#round(cor(data_MSOA$violence_poli, data_MSOA$violence_syn, use = "complete.obs"), 3)
-#text(1200, 1300, "cor = 0.40", cex = 0.9)
-#plot(data_MSOA$property_poli, data_MSOA$property_syn, pch = 20,
-#     ylim = c(0,2700), xlim = c(0,2700),
-#     main = "Property crime in MSOAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_MSOA$property_syn ~ data_MSOA$property_poli))
-#round(cor(data_MSOA$property_poli, data_MSOA$property_syn, use = "complete.obs"), 3)
-#text(2100, 2300, "cor = 0.48", cex = 0.9)
-#plot(data_MSOA$damage_poli, data_MSOA$damage_syn, pch = 20,
-#     ylim = c(0,600), xlim = c(0,600),
-#     main = "Damage crime in MSOAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_MSOA$damage_syn ~ data_MSOA$damage_poli))
-#round(cor(data_MSOA$damage_poli, data_MSOA$damage_syn, use = "complete.obs"), 3)
-#text(480, 500, "cor = 0.23", cex = 0.9)
+data_MSOA <- police_data_MSOA %>%
+  left_join(syn_data_MSOA, by = "MSOA11CD") %>%
+  left_join(HHsyn_data_MSOA, by = "MSOA11CD")
 
 #load police data
 police_data <- read.csv(here("data", "prc-csp-1112-1415-tables.csv"))
@@ -516,6 +564,8 @@ police_data <- police_data %>%
 police_data <- police_data %>%
   mutate(Number.of.Offences = ifelse(Number.of.Offences < 0, 0, Number.of.Offences)) %>%
   group_by(CSP.Name) %>%
+  filter(Offence.Subgroup != "Theft from the person" & Offence.Subgroup != "Other theft offences" &
+           Offence.Subgroup != "Fraud offences" & Offence.Subgroup != "Shoplifting") %>%
   summarise(violence_poli = sum(Number.of.Offences[Offence.Group == "Sexual offences" |
                                                      Offence.Group == "Violence against the person" |
                                                      Offence.Group == "Robbery"]),
@@ -527,39 +577,16 @@ syn_data_CSP <- Data_crimes %>%
   group_by(CSP17NM) %>%
   summarise(violence_syn = sum(violence),
             property_syn = sum(theft),
-            damage_syn   = sum(damage)) 
+            damage_syn   = sum(damage))
+HHsyn_data_CSP <- HHData_crimes %>%
+  group_by(CSP17NM) %>%
+  summarise(HHproperty_syn = sum(theft),
+            HHdamage_syn   = sum(damage))
 
 #merge both files
-data_CSP <- left_join(syn_data_CSP, police_data, by = c("CSP17NM" = "CSP.Name"))
-
-# set plotting parameters
-#par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-
-#correlation between count of crimes in police data and synthetic police data at CSP level
-#plot(data_CSP$violence_poli, data_CSP$violence_syn, pch = 20,
-#     ylim = c(0,26000), xlim = c(0,26000),
-#     main = "Violent crime in CSPs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_CSP$violence_syn ~ data_CSP$violence_poli))
-#round(cor(data_CSP$violence_poli, data_CSP$violence_syn, use = "complete.obs"), 3)
-#text(20000, 4000, "cor = 0.83", cex = 0.9)
-#plot(data_CSP$property_poli, data_CSP$property_syn, pch = 20,
-#     ylim = c(0,55000), xlim = c(0,55000),
-#     main = "Property crime in CSPs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_CSP$property_syn ~ data_CSP$property_poli))
-#round(cor(data_CSP$property_poli, data_CSP$property_syn, use = "complete.obs"), 3)
-#text(45000, 8000, "cor = 0.85", cex = 0.9)
-#plot(data_CSP$damage_poli, data_CSP$damage_syn, pch = 20,
-#     ylim = c(0,28000), xlim = c(0,28000),
-#     main = "Damage crime in CSPs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_CSP$damage_syn ~ data_CSP$damage_poli))
-#round(cor(data_CSP$damage_poli, data_CSP$damage_syn, use = "complete.obs"), 3)
-#text(20000, 4000, "cor = 0.80", cex = 0.9)
+data_CSP <- syn_data_CSP %>%
+  left_join(police_data, by = c("CSP17NM" = "CSP.Name")) %>%
+  left_join(HHsyn_data_CSP, by = "CSP17NM")
 
 #add PFA in police data
 lookup_CSP <- lookup %>%
@@ -572,102 +599,13 @@ data_PFA <- data_PFA %>%
   group_by(PFA17CD) %>%
   summarise(violence_syn = sum(violence_syn ),
             violence_poli = sum(violence_poli),
-            property_syn = sum(property_syn),
+            HHproperty_syn = sum(HHproperty_syn),
             property_poli = sum(property_poli),
-            damage_syn = sum(damage_syn),
+            HHdamage_syn = sum(HHdamage_syn),
             damage_poli = sum(damage_poli))
 
-# set plotting parameters and avoid scientific notation
-#par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
+#avoid scientific notation
 options(scipen=999)
-
-#correlation between count of crimes in police data and synthetic police data at PFA level
-#(data_PFA$violence_poli, data_PFA$violence_syn, pch = 20,
-#     ylim = c(0,220000), xlim = c(0,220000),
-#     main = "Violent crime in PFAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_PFA$violence_syn ~ data_PFA$violence_poli))
-#round(cor(data_PFA$violence_poli, data_PFA$violence_syn, use = "complete.obs"), 3)
-#text(150000, 40000, "cor = 0.96", cex = 0.9)
-#plot(data_PFA$property_poli, data_PFA$property_syn, pch = 20,
-#     ylim = c(0,500000), xlim = c(0,500000),
-#     main = "Property crime in PFAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_PFA$property_syn ~ data_PFA$property_poli))
-#round(cor(data_PFA$property_poli, data_PFA$property_syn, use = "complete.obs"), 3)
-#text(350000, 80000, "cor = 0.99", cex = 0.9)
-#plot(data_PFA$damage_poli, data_PFA$damage_syn, pch = 20,
-#     ylim = c(0,300000), xlim = c(0,300000),
-#     main = "Damage crime in PFAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_PFA$damage_syn ~ data_PFA$damage_poli))
-#round(cor(data_PFA$damage_poli, data_PFA$damage_syn, use = "complete.obs"), 3)
-#text(200000, 50000, "cor = 0.91", cex = 0.9)
-
-#plot only property crimes
-# set plotting parameters and avoid scientific notation
-#par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-#options(scipen=999)
-
-#correlation between count of crimes in police data and synthetic police data for property crimes
-#plot(data_MSOA$property_poli, data_MSOA$property_syn, pch = 20,
-#     ylim = c(0,2700), xlim = c(0,2700),
-#     main = "Property crime in MSOAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_MSOA$property_syn ~ data_MSOA$property_poli))
-#round(cor(data_MSOA$property_poli, data_MSOA$property_syn, use = "complete.obs"), 3)
-#text(2100, 2300, "cor = 0.48", cex = 0.9)
-#plot(data_CSP$property_poli, data_CSP$property_syn, pch = 20,
-#     ylim = c(0,55000), xlim = c(0,55000),
-#     main = "Property crime in CSPs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_CSP$property_syn ~ data_CSP$property_poli))
-#round(cor(data_CSP$property_poli, data_CSP$property_syn, use = "complete.obs"), 3)
-#text(45000, 8000, "cor = 0.85", cex = 0.9)
-#plot(data_PFA$property_poli, data_PFA$property_syn, pch = 20,
-#     ylim = c(0,500000), xlim = c(0,500000),
-#     main = "Property crime in PFAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_PFA$property_syn ~ data_PFA$property_poli))
-#round(cor(data_PFA$property_poli, data_PFA$property_syn, use = "complete.obs"), 3)
-#text(350000, 80000, "cor = 0.99", cex = 0.9)
-
-#plot only violent crimes
-# set plotting parameters and avoid scientific notation
-#par(mfrow=c(2,2), mai = c(0.65, 1, 0.5, 0.5))
-#options(scipen=999)
-
-#correlation between count of crimes in police data and synthetic police data for violent crimes
-#plot(data_MSOA$violence_poli, data_MSOA$violence_syn, pch = 20,
-#     ylim = c(0,1500), xlim = c(0,1500),
-#     main = "Violent crime in MSOAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_MSOA$violence_syn ~ data_MSOA$violence_poli))
-#round(cor(data_MSOA$violence_poli, data_MSOA$violence_syn, use = "complete.obs"), 3)
-#text(1200, 1300, "cor = 0.40", cex = 0.9)
-#plot(data_CSP$violence_poli, data_CSP$violence_syn, pch = 20,
-#     ylim = c(0,26000), xlim = c(0,26000),
-#     main = "Violent crime in CSPs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_CSP$violence_syn ~ data_CSP$violence_poli))
-#round(cor(data_CSP$violence_poli, data_CSP$violence_syn, use = "complete.obs"), 3)
-#text(20000, 4000, "cor = 0.83", cex = 0.9)
-#plot(data_PFA$violence_poli, data_PFA$violence_syn, pch = 20,
-#     ylim = c(0,220000), xlim = c(0,220000),
-#     main = "Violent crime in PFAs",
-#     xlab = "Police data",
-#     ylab = "Synthetic police data")
-#abline(lm(data_PFA$violence_syn ~ data_PFA$violence_poli))
-#round(cor(data_PFA$violence_poli, data_PFA$violence_syn, use = "complete.obs"), 3)
-#text(150000, 40000, "cor = 0.96", cex = 0.9)
 
 #correlation between synthetic police data and police data
 vio_PFA_plot <- ggplot(data_PFA, aes(x = violence_poli, y = violence_syn)) +
@@ -691,48 +629,48 @@ vio_MSOA_plot <- ggplot(data_MSOA, aes(x = violence_poli, y = violence_syn)) +
   ggtitle("Violence (MSOAs)") +
   labs(x = "Police", y = "Synthetic") + 
   annotate(geom = "text", x = 900, y = 750, label = "cor = 0.40")
-prop_PFA_plot <- ggplot(data_PFA, aes(x = property_poli, y = property_syn)) +
+prop_PFA_plot <- ggplot(data_PFA, aes(x = property_poli, y = HHproperty_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Property crime (PFAs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 200000, y = 450000, label = "cor = 0.99")
-prop_CSP_plot <- ggplot(data_CSP, aes(x = property_poli, y = property_syn)) +
+  annotate(geom = "text", x = 100000, y = 135000, label = "cor = 0.98")
+prop_CSP_plot <- ggplot(data_CSP, aes(x = property_poli, y = HHproperty_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Property crime (CSPs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 20000, y = 45000, label = "cor = 0.85")
-prop_MSOA_plot <- ggplot(data_MSOA, aes(x = property_poli, y = property_syn)) +
+  annotate(geom = "text", x = 10000, y = 13000, label = "cor = 0.88")
+prop_MSOA_plot <- ggplot(data_MSOA, aes(x = property_poli, y = HHproperty_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Property crime (MSOAs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 1300, y = 1800, label = "cor = 0.48")
-dam_PFA_plot <- ggplot(data_PFA, aes(x = damage_poli, y = damage_syn)) +
+  annotate(geom = "text", x = 550, y = 350, label = "cor = 0.55")
+dam_PFA_plot <- ggplot(data_PFA, aes(x = damage_poli, y = HHdamage_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Damage (PFAs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 30000, y = 260000, label = "cor = 0.91")
-dam_CSP_plot <- ggplot(data_CSP, aes(x = damage_poli, y = damage_syn)) +
+  annotate(geom = "text", x = 30000, y = 80000, label = "cor = 0.91")
+dam_CSP_plot <- ggplot(data_CSP, aes(x = damage_poli, y = HHdamage_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Damage (CSPs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 5000, y = 24500, label = "cor = 0.80")
-dam_MSOA_plot <- ggplot(data_MSOA, aes(x = property_poli, y = property_syn)) +
+  annotate(geom = "text", x = 5000, y = 7800, label = "cor = 0.82")
+dam_MSOA_plot <- ggplot(data_MSOA, aes(x = property_poli, y = HHproperty_syn)) +
   geom_point() +
   theme_bw() +
-  geom_smooth(method = "lm", color = "blue", fullrange = "T") +
+  geom_smooth(method = "lm", color = "red", fullrange = "T") +
   ggtitle("Damage (MSOAs)") +
   labs(x = "Police", y = "Synthetic") + 
-  annotate(geom = "text", x = 1200, y = 1850, label = "cor = 0.23")
+  annotate(geom = "text", x = 550, y = 350, label = "cor = 0.29")
 
 #print scatter plots
 ggarrange(vio_PFA_plot, vio_CSP_plot, vio_MSOA_plot, 
