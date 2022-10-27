@@ -8,15 +8,6 @@
 
 rm(list=ls())
 
-#for David
-setwd("C:/Users/david/Dropbox (The University of Manchester)/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-#for Ian
-setwd("~/Dropbox/Academic Articles/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data/Household")
-
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=9000)
-
 #seed is set for replication
 set.seed(999)
 
@@ -29,11 +20,11 @@ library(rsq)
 library(DescTools)
 
 #load synthetic population
-load(here("HHsynthetic_population.RData"))
+load(here("data", "HHsynthetic_population.RData"))
 syn_res_OA <- syn_res
 
 #load CSEW non-victim form data
-load(here("csew_apr11mar12_nvf.Rdata"))
+load(here("data", "csew_apr11mar12_nvf.Rdata"))
 
 #Data manipulation - CSEW to match ONS data
 #Head of household 65 or over
@@ -164,4 +155,4 @@ sum(syn_res_OA$damage)
 #  mutate_at(c("violence", "theft", "damage"), cap)
 
 #save synthetic UK population with crimes as RData
-save(syn_res_OA, file = "HHsynthetic_population_crimes.RData")
+save(syn_res_OA, file = here("data", "HHsynthetic_population_crimes.RData"))

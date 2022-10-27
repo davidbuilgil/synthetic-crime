@@ -8,11 +8,6 @@
 
 rm(list=ls())
 
-#for David
-setwd("C:/Users/david/Dropbox (The University of Manchester)/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-#for Ian
-setwd("~/Dropbox/Academic Articles/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-
 #seed is set for replication
 set.seed(999)
 
@@ -21,12 +16,8 @@ library(dplyr)
 library(here)
 library(rsq)
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=8000)
-
 #load synthetic population of crimes
-load(here("Household/HHsynthetic_population_crimes.Rdata"))
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
 
 #subset individuals who were victimised for property crime
 syn_res_OA_theft <- syn_res_OA %>%
@@ -45,10 +36,10 @@ Data_theft <- syn_res_OA_theft %>%
 rm(list=c("syn_res_OA_theft", "syn_res_OA"))
 
 #load in CSEW non-victim form data
-load(here("csew_apr11mar12_nvf.Rdata"))
+load(here("data", "csew_apr11mar12_nvf.Rdata"))
 
 #load CSEW victim form data
-load(here("csew_apr11mar12_vf.Rdata"))
+load(here("data", "csew_apr11mar12_vf.Rdata"))
 
 #Data manipulation - CSEW to match ONS data
 #Head of household 65 or over
@@ -120,7 +111,6 @@ csew_vf_theft <-  csew_vf %>%
 #create GLM formula for predicting copsknow (dep. var.) with demographic variables (ind. var.)
 glm_copsknow <- copsknow ~ age_more65 + terraced + hrp_white + one_person + no_income + no_car + social_rent + hrp_no_religion
 
-
 #estimate copsknow model for property crime
 model_repo_theft <- glm(formula = glm_copsknow, family = binomial(link = "logit"), data = csew_vf_theft)
 summary(model_repo_theft)
@@ -153,14 +143,14 @@ Data_theft <- Data_theft %>%
 head(Data_theft)
 
 #save synthetic police data of property crimes as RData
-save(Data_theft, file = "Household/HHsynthetic_police_property.RData")
+save(Data_theft, file = here("data", "HHsynthetic_police_property.RData"))
 
 #remove files to save memory
 rm(list=c("csew_vf_theft", "Data_theft", "csew", "csew_vf",
           "model_repo_theft"))
 
 #load synthetic population of crimes
-load(here("Household/HHsynthetic_population_crimes.Rdata"))
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
 
 #subset individuals who were victimised for damage
 syn_res_OA_dam <- syn_res_OA %>%
@@ -179,10 +169,10 @@ Data_dam <- syn_res_OA_dam %>%
 rm(list=c("syn_res_OA_dam", "syn_res_OA"))
 
 #load in CSEW non-victim form data
-load(here("csew_apr11mar12_nvf.Rdata"))
+load(here("data", "csew_apr11mar12_nvf.Rdata"))
 
 #load CSEW victim form data
-load(here("csew_apr11mar12_vf.Rdata"))
+load(here("data", "csew_apr11mar12_vf.Rdata"))
 
 #Data manipulation - CSEW to match ONS data
 #Head of household 65 or over
@@ -268,7 +258,6 @@ Data_dam <- Data_dam %>%
          exp_estimates = exp(estimates) / (1 + exp(estimates)),
          copsknow = rbinom(nrow(Data_dam), 1, exp_estimates))
 
-
 #check damage crime frequency distributions comparison
 prop.table(table(csew_vf_dam$copsknow))
 prop.table(table(Data_dam$copsknow))
@@ -282,23 +271,20 @@ Data_dam <- Data_dam %>%
 head(Data_dam)
 
 #save synthetic police data of property crimes as RData
-save(Data_dam, file = "Household/HHsynthetic_police_damage.RData")
+save(Data_dam, file = here("data", "HHsynthetic_police_damage.RData"))
 
 #remove files to save memory
 rm(list=c("csew_vf_dam", "csew", "csew_vf",
           "model_repo_dam"))
 
-#load synthetic police data for violent crime
-#load(here("Household/HHsynthetic_police_damage.RData"))
-
 #load synthetic police data for property crime
-load(here("Household/HHsynthetic_police_property.RData"))
+load(here("data", "HHsynthetic_police_property.RData"))
 
 #row bind each crime type data frame
 Data_crimes <- bind_rows(Data_theft, Data_dam)
 
 #load underrecording estimates in PFAs data
-csew_under <- read.csv("csew_prc_pfa_11_v3.csv")
+csew_under <- read.csv("data", "csew_prc_pfa_11_v3.csv"))
 
 #select variables of interest
 csew_under <- csew_under %>%
@@ -308,7 +294,7 @@ csew_under <- csew_under %>%
 rm(list=c("Data_dam", "Data_theft", "glm_copsknow"))
 
 #load OA to LAD lookup
-lookup <- read.csv("Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv")
+lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv"))
 
 #select variables of interest in lookup
 lookup <- lookup %>%
@@ -358,4 +344,4 @@ Data_crimes <- Data_crimes %>%
 head(Data_crimes)
 
 #save all synthetic police data as RData
-save(Data_crimes, file = "Household/HHsynthetic_police_crimes.RData")
+save(Data_crimes, file = here("data", "HHsynthetic_police_crimes.RData"))

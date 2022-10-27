@@ -8,11 +8,6 @@
 
 rm(list=ls())
 
-#for David
-setwd("C:/Users/david/Dropbox (The University of Manchester)/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-#for Ian
-setwd("~/Dropbox/Academic Articles/Measurement error and crime - data dump/Simulation - zero-inflated SAE/Data")
-
 #seed is set for replication
 set.seed(999)
 
@@ -21,12 +16,8 @@ library(dplyr)
 library(here)
 library(sampling)
 
-#increase memory limit a bit
-memory.limit()
-memory.limit(size=10000)
-
 #load synthetic population of crimes
-load(here("Household/HHsynthetic_population_crimes.Rdata"))
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
 
 #HH survey sample, with one person selected per HH. Data about HRP so no need to restrict based on individual characteristics
 #as in the CSEW, remove all individuals aged less than 16 from sampling
@@ -38,7 +29,7 @@ syn_res_OA <- syn_res_OA %>%
   select(ID, OA11CD)
 
 #load OA to LAD lookup
-lookup <- read.csv("Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv")
+lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv"))
 
 #select variables of interest in lookup
 lookup <- lookup %>%
@@ -91,7 +82,7 @@ MSOA_PFA <- pop_MSOA %>%
   left_join(pop_PFA, by = "PFA17CD")
 
 #load area sample sizes in CSEW
-csew_11_sample <- read.csv("csew_11_sample.csv")
+csew_11_sample <- read.csv(here("data", "csew_11_sample.csv"))
 
 #load LAD to PFA lookup
 lookup2 <- read.csv("https://opendata.arcgis.com/datasets/31dec1a0f04a435dadd43de6292ea260_0.csv")
@@ -174,7 +165,7 @@ sample.C <- strata(pop_MSOA.B, "PFA17CD", size = MSOA_PFA$MSOA.B,
 sample_MSOA.C <- getdata(pop_MSOA.C, sample.C)
 
 #load OA to LAD lookup
-lookup <- read.csv("Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv")
+lookup <- read.csv(here("data", "Output_Area_to_LSOA_to_MSOA_to_Local_Authority_District__December_2017__Lookup_with_Area_Classifications_in_Great_Britain.csv"))
 
 #select variables of interest in lookup
 lookup <- lookup %>%
@@ -235,11 +226,11 @@ rm(list=c("csew_PFA", "sample_LSOA.C", "sample_MSOA.B", "sample_units.A", "sampl
           "sample.C", "sample_units.B", "sample_units.C", "sample.A", "syn_res_OA"))
 
 #load synthetic population
-load(here("Household/HHsynthetic_population_crimes.Rdata"))
+load(here("data", "HHsynthetic_population_crimes.Rdata"))
 
 #select synthetic population sample as in the CSEW
 syn_sample_OA <- syn_res_OA %>%
   filter(ID %in% sample$ID)
 
 #save synthetic survey sample as RData
-save(syn_sample_OA, file = "Household/HHsynthetic_survey_crimes.RData")
+save(syn_sample_OA, file = here("data", "HHsynthetic_survey_crimes.RData"))
