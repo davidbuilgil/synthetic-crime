@@ -267,7 +267,7 @@ CSP_list <- CSP_list %>%
 #plot
 plot.CSP.vio <- ggplot(CSP_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.vio.li, ymax = CSP.vio.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = CSP.vio.li, ymax = CSP.vio.ui), alpha = 0.3) +
   ggtitle("Violence (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -345,7 +345,7 @@ MSOA_list <- MSOA_list %>%
 #plot
 plot.MSOA.vio <- ggplot(MSOA_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.vio.li, ymax = MSOA.vio.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = MSOA.vio.li, ymax = MSOA.vio.ui), alpha = 0.3) +
   ggtitle("Violence (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
@@ -536,7 +536,7 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.theft <- ggplot(PFAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = PFA.theft.li, ymax = PFA.theft.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = PFA.theft.li, ymax = PFA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
   theme_bw()
@@ -549,7 +549,7 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.damage <- ggplot(PFAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = PFA.damage.li, ymax = PFA.damage.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = PFA.damage.li, ymax = PFA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
   theme_bw()
@@ -645,7 +645,7 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.theft <- ggplot(CSPhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.theft.li, ymax = CSP.theft.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = CSP.theft.li, ymax = CSP.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -658,7 +658,7 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.damage <- ggplot(CSPhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.damage.li, ymax = CSP.damage.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = CSP.damage.li, ymax = CSP.damage.ui), alpha = 0.3) +
   ggtitle("Damage (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -754,7 +754,7 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.theft <- ggplot(MSOAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.theft.li, ymax = MSOA.theft.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = MSOA.theft.li, ymax = MSOA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
@@ -767,7 +767,7 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.damage <- ggplot(MSOAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.damage.li, ymax = MSOA.damage.ui), alpha = 0.1) +
+  geom_ribbon(aes(ymin = MSOA.damage.li, ymax = MSOA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
