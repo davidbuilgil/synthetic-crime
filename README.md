@@ -47,4 +47,4 @@ All scripts should be ran from within the 'synthetic-crime.Rproj' R project file
 6.  The R script file named *'Part 6 Empirical evaluation'* is used to evaluate the results of the simulation study.
 7.  The R script file names *'Part 7 Check reliability'* is used to check the internal reliability of our synthetic crime data.
 
-Moreover the R script file named *'ZZ Exemplar application LISA'* presents an exemplar application of the synthetic crime data generated in this simulation to compute Local Indicators of Spatial Association of crime, *'XX Explore measurement error'* presents another exemplar application to study measurement error in police recorded crime data.
+Moreover the R script file named *'ZZ Exemplar application LISA'* presents an exemplar application of the synthetic crime data generated in this simulation to compute Local Indicators of Spatial Association of crime, and *'XX Explore measurement error'* presents another exemplar application to study measurement error in police recorded crime data.
