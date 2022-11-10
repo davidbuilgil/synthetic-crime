@@ -208,7 +208,7 @@ data_for_boxplot <- data_for_boxplot %>%
 #grouped boxplot
 ggplot(data_for_boxplot, aes(x = `Crime type`, y = ME, fill = Geography)) + 
   geom_boxplot() +
-  ggtitle("Boxplots of measurement error in police crime records (simulation)") +
+  ggtitle("Boxplots of recording rates in police crime records (simulation)") +
   stat_summary(fun.y = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..),
                linetype = "dashed", color = "red",
                position = position_dodge2(width = 0.75,   
