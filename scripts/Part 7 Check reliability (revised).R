@@ -190,7 +190,7 @@ PFA_list <- PFA_list %>%
 #plot
 plot.PFA.vio <- ggplot(PFA_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = PFA.vio.li, ymax = PFA.vio.ui), alpha = 0.3) +
   ggtitle("Violence (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
@@ -270,7 +270,7 @@ CSP_list <- CSP_list %>%
 #plot
 plot.CSP.vio <- ggplot(CSP_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = CSP.vio.li, ymax = CSP.vio.ui), alpha = 0.3) +
   ggtitle("Violence (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
@@ -350,7 +350,7 @@ MSOA_list <- MSOA_list %>%
 #plot
 plot.MSOA.vio <- ggplot(MSOA_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = MSOA.vio.li, ymax = MSOA.vio.ui), alpha = 0.3) +
   ggtitle("Violence (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
@@ -549,7 +549,7 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.theft <- ggplot(PFAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = PFA.theft.li, ymax = PFA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
@@ -563,7 +563,7 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.damage <- ggplot(PFAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = PFA.damage.li, ymax = PFA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
@@ -667,7 +667,7 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.theft <- ggplot(CSPhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = CSP.theft.li, ymax = CSP.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
@@ -681,7 +681,7 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.damage <- ggplot(CSPhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = CSP.damage.li, ymax = CSP.damage.ui), alpha = 0.3) +
   ggtitle("Damage (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
@@ -766,6 +766,13 @@ MSOA_save_damage <- MSOAhh_list %>%
 #save dataset
 write.csv(MSOA_save_theft, here("data/srswr", "srswr_theft_MSOA.csv"))
 write.csv(MSOA_save_damage, here("data/srswr", "srswr_damage_MSOA.csv"))
+#MSOA_theft_list <- read.csv(here("data/srswr", "srswr_theft_MSOA.csv"))
+#MSOA_damage_list <- read.csv(here("data/srswr", "srswr_damage_MSOA.csv"))
+#MSOAhh_list <- MSOA_theft_list %>%
+#  select(MSOA11CD, theft.rate, MSOA.theft.li, MSOA.theft.ui) %>%
+#  left_join(MSOA_damage_list, by = "MSOA11CD") %>%
+#  select(MSOA11CD, theft.rate, MSOA.theft.li, MSOA.theft.ui,
+#         damage.rate, MSOA.damage.li, MSOA.damage.ui)
 
 #remove objects
 rm(list=c("MSOA.theft", "MSOA.damage", "MSOA_save_theft", "MSOA_save_damage"))
@@ -778,7 +785,7 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.theft <- ggplot(MSOAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = MSOA.theft.li, ymax = MSOA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
@@ -792,7 +799,7 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.damage <- ggplot(MSOAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  ylim(0.0, 0.15) +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = MSOA.damage.li, ymax = MSOA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
@@ -803,10 +810,6 @@ ggarrange(plot.PFA.vio, plot.CSP.vio, plot.MSOA.vio,
           plot.PFA.theft, plot.CSP.theft, plot.MSOA.theft,
           plot.PFA.damage, plot.CSP.damage, plot.MSOA.damage,
           nrow = 3, ncol = 3)
-ggarrange(plot.PFA.vio, plot.CSP.vio,
-          plot.PFA.theft, plot.CSP.theft,
-          plot.PFA.damage, plot.CSP.damage,
-          nrow = 3, ncol = 2)
 
 ggsave(here("plots/reliability_plot.png"),
        width = 20, height = 15, units = "cm")
