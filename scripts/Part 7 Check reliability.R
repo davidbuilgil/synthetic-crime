@@ -177,6 +177,7 @@ PFA_save <- PFA_list %>%
 
 #save dataset
 write.csv(PFA_save, here("data/srswr", "srswr_vio_PFA.csv"))
+#PFA_list <- read.csv(here("data/srswr", "srswr_vio_PFA.csv"))
 
 #remove objects
 rm(list=c("PFA", "PFA_save"))
@@ -189,6 +190,7 @@ PFA_list <- PFA_list %>%
 #plot
 plot.PFA.vio <- ggplot(PFA_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
+  ylim(0.0, 0.20) +
   geom_ribbon(aes(ymin = PFA.vio.li, ymax = PFA.vio.ui), alpha = 0.3) +
   ggtitle("Violence (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
@@ -250,11 +252,12 @@ CSP_list <- CSP_list %>%
 
 #create dataset to save
 CSP_save <- CSP_list %>%
-  select(CSP17CD, vio.rate, PFA.vio.li, PFA.vio.ui) %>%
+  select(CSP17CD, vio.rate, CSP.vio.li, CSP.vio.ui) %>%
   cbind(CSP)
 
 #save dataset
 write.csv(CSP_save, here("data/srswr", "srswr_vio_CSP.csv"))
+#CSP_list <- read.csv(here("data/srswr", "srswr_vio_CSP.csv"))
 
 #remove objects
 rm(list=c("CSP", "CSP_save"))
@@ -267,7 +270,8 @@ CSP_list <- CSP_list %>%
 #plot
 plot.CSP.vio <- ggplot(CSP_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.vio.li, ymax = CSP.vio.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = CSP.vio.li, ymax = CSP.vio.ui), alpha = 0.3) +
   ggtitle("Violence (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -328,11 +332,12 @@ MSOA_list <- MSOA_list %>%
 
 #create dataset to save
 MSOA_save <- MSOA_list %>%
-  select(MSOA11CD, vio.rate, PFA.vio.li, PFA.vio.ui) %>%
+  select(MSOA11CD, vio.rate, MSOA.vio.li, MSOA.vio.ui) %>%
   cbind(MSOA)
 
 #save dataset
 write.csv(MSOA_save, here("data/srswr", "srswr_vio_MSOA.csv"))
+#MSOA_list <- read.csv(here("data/srswr", "srswr_vio_MSOA.csv"))
 
 #remove objects
 rm(list=c("MSOA", "MSOA_save"))
@@ -345,7 +350,8 @@ MSOA_list <- MSOA_list %>%
 #plot
 plot.MSOA.vio <- ggplot(MSOA_list, aes(x = vio.order, y = vio.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.vio.li, ymax = MSOA.vio.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = MSOA.vio.li, ymax = MSOA.vio.ui), alpha = 0.3) +
   ggtitle("Violence (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
@@ -524,6 +530,13 @@ PFA_save_damage <- PFAhh_list %>%
 #save dataset
 write.csv(PFA_save_theft, here("data/srswr", "srswr_theft_PFA.csv"))
 write.csv(PFA_save_damage, here("data/srswr", "srswr_damage_PFA.csv"))
+#PFA_theft_list <- read.csv(here("data/srswr", "srswr_theft_PFA.csv"))
+#PFA_damage_list <- read.csv(here("data/srswr", "srswr_damage_PFA.csv"))
+#PFAhh_list <- PFA_theft_list %>%
+#  select(PFA17CD, theft.rate, PFA.theft.li, PFA.theft.ui) %>%
+#  left_join(PFA_damage_list, by = "PFA17CD") %>%
+#  select(PFA17CD, theft.rate, PFA.theft.li, PFA.theft.ui,
+#         damage.rate, PFA.damage.li, PFA.damage.ui)
 
 #remove objects
 rm(list=c("PFA.theft", "PFA.damage", "PFA_save_theft", "PFA_save_damage"))
@@ -536,7 +549,8 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.theft <- ggplot(PFAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = PFA.theft.li, ymax = PFA.theft.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = PFA.theft.li, ymax = PFA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
   theme_bw()
@@ -549,7 +563,8 @@ PFAhh_list <- PFAhh_list %>%
 #plot
 plot.PFA.damage <- ggplot(PFAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = PFA.damage.li, ymax = PFA.damage.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = PFA.damage.li, ymax = PFA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (PFAs)")  +
   labs(x = "PFAs", y = "Crime rate") +
   theme_bw()
@@ -633,6 +648,13 @@ CSP_save_damage <- CSPhh_list %>%
 #save dataset
 write.csv(CSP_save_theft, here("data/srswr", "srswr_theft_CSP.csv"))
 write.csv(CSP_save_damage, here("data/srswr", "srswr_damage_CSP.csv"))
+#CSP_theft_list <- read.csv(here("data/srswr", "srswr_theft_CSP.csv"))
+#CSP_damage_list <- read.csv(here("data/srswr", "srswr_damage_CSP.csv"))
+#CSPhh_list <- CSP_theft_list %>%
+#  select(CSP17CD, theft.rate, CSP.theft.li, CSP.theft.ui) %>%
+#  left_join(CSP_damage_list, by = "CSP17CD") %>%
+#  select(CSP17CD, theft.rate, CSP.theft.li, CSP.theft.ui,
+#         damage.rate, CSP.damage.li, CSP.damage.ui)
 
 #remove objects
 rm(list=c("CSP.theft", "CSP.damage", "CSP_save_theft", "CSP_save_damage"))
@@ -645,7 +667,8 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.theft <- ggplot(CSPhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.theft.li, ymax = CSP.theft.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = CSP.theft.li, ymax = CSP.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -658,7 +681,8 @@ CSPhh_list <- CSPhh_list %>%
 #plot
 plot.CSP.damage <- ggplot(CSPhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = CSP.damage.li, ymax = CSP.damage.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = CSP.damage.li, ymax = CSP.damage.ui), alpha = 0.3) +
   ggtitle("Damage (CSPs)")  +
   labs(x = "CSPs", y = "Crime rate") +
   theme_bw()
@@ -742,6 +766,13 @@ MSOA_save_damage <- MSOAhh_list %>%
 #save dataset
 write.csv(MSOA_save_theft, here("data/srswr", "srswr_theft_MSOA.csv"))
 write.csv(MSOA_save_damage, here("data/srswr", "srswr_damage_MSOA.csv"))
+#MSOA_theft_list <- read.csv(here("data/srswr", "srswr_theft_MSOA.csv"))
+#MSOA_damage_list <- read.csv(here("data/srswr", "srswr_damage_MSOA.csv"))
+#MSOAhh_list <- MSOA_theft_list %>%
+#  select(MSOA11CD, theft.rate, MSOA.theft.li, MSOA.theft.ui) %>%
+#  left_join(MSOA_damage_list, by = "MSOA11CD") %>%
+#  select(MSOA11CD, theft.rate, MSOA.theft.li, MSOA.theft.ui,
+#         damage.rate, MSOA.damage.li, MSOA.damage.ui)
 
 #remove objects
 rm(list=c("MSOA.theft", "MSOA.damage", "MSOA_save_theft", "MSOA_save_damage"))
@@ -754,7 +785,8 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.theft <- ggplot(MSOAhh_list, aes(x = theft.order, y = theft.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.theft.li, ymax = MSOA.theft.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = MSOA.theft.li, ymax = MSOA.theft.ui), alpha = 0.3) +
   ggtitle("Property crime (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
@@ -767,7 +799,8 @@ MSOAhh_list <- MSOAhh_list %>%
 #plot
 plot.MSOA.damage <- ggplot(MSOAhh_list, aes(x = damage.order, y = damage.rate)) +
   geom_line() +
-  geom_ribbon(aes(ymin = MSOA.damage.li, ymax = MSOA.damage.ui), alpha = 0.1) +
+  ylim(0.0, 0.20) +
+  geom_ribbon(aes(ymin = MSOA.damage.li, ymax = MSOA.damage.ui), alpha = 0.3) +
   ggtitle("Damage (MSOAs)")  +
   labs(x = "MSOAs", y = "Crime rate") +
   theme_bw()
